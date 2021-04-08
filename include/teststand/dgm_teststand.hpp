@@ -12,12 +12,12 @@
 #ifndef DGM_SOLO_HH
 #define DGM_SOLO_HH
 
-#include "bolt/bolt.hpp"
+#include "teststand/teststand.hpp"
 #include "dynamic_graph_manager/dynamic_graph_manager.hpp"
 #include "mim_msgs/srv/joint_calibration.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
 
-namespace bolt
+namespace teststand
 {
 class DGMBolt : public dynamic_graph_manager::DynamicGraphManager
 {
@@ -89,12 +89,12 @@ private:
     /**
      * @brief test_bench_ the real test bench hardware drivers.
      */
-    Bolt bolt_;
+    Teststand bolt_;
 
     /**
      * @brief ctrl_joint_torques_ the joint torques to be sent. Used in this
      * class to perform a local copy of the control. This is need in order
-     * to send this copy to the Bolt class
+     * to send this copy to the Teststand class
      */
     Eigen::Vector6d ctrl_joint_torques_;
 
@@ -111,6 +111,6 @@ private:
     Eigen::Vector6d zero_to_index_angle_from_file_;
 };
 
-}  // namespace bolt
+}  // namespace teststand
 
 #endif  // DGM_TEST_BENCH_8_MOTORS_HH

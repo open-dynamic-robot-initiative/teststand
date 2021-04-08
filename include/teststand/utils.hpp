@@ -23,7 +23,7 @@
 #include "real_time_tools/timer.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
 
-namespace bolt
+namespace teststand
 {
 /**
  * @brief This small structure is used for reading the calibration parameters
@@ -125,4 +125,4 @@ void print_vector_int(
     }
     rt_printf("]\n");
 }
-}  // namespace bolt
+}  // namespace teststand

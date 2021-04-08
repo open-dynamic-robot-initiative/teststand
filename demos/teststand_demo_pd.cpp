@@ -7,14 +7,14 @@
  * This file uses the Solo12 class in a small demo.
  */
 
-#include "bolt/bolt.hpp"
-#include "bolt/utils.hpp"
+#include "teststand/teststand.hpp"
+#include "teststand/utils.hpp"
 
-using namespace bolt;
+using namespace teststand;
 
 static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
 {
-    Bolt& robot = *static_cast<Bolt*>(args);
+    Teststand& robot = *static_cast<Teststand*>(args);
 
     // Using conversion from PD gains from example.cpp
     double kp = 3.0 * 9 * 0.025;
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
     real_time_tools::RealTimeThread thread;
     enable_ctrl_c();
 
-    Bolt robot;
+    Teststand robot;
     robot.initialize(std::string(argv[1]));
 
     rt_printf("controller is set up \n");

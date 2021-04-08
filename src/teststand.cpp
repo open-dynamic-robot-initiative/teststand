@@ -4,18 +4,18 @@
  * @copyright Copyright (c) 2021, New York University and Max Planck
  * Gesellschaft
  *
- * @brief Implement the Bolt class.
+ * @brief Implement the Teststand class.
  */
 
-#include "bolt/bolt.hpp"
+#include "teststand/teststand.hpp"
 
 #include <cmath>
 
 #include "odri_control_interface/utils.hpp"
 
-namespace bolt
+namespace teststand
 {
-Bolt::Bolt()
+Teststand::Teststand()
 {
     /**
      * Hardware status
@@ -64,7 +64,7 @@ Bolt::Bolt()
     nb_time_we_acquired_sensors_ = 0;
 }
 
-void Bolt::initialize(const std::string& network_id)
+void Teststand::initialize(const std::string& network_id)
 {
     // Network info.
     network_id_ = network_id;
@@ -84,12 +84,12 @@ void Bolt::initialize(const std::string& network_id)
     robot_->Init();
 }
 
-void Bolt::wait_until_ready()
+void Teststand::wait_until_ready()
 {
     robot_->WaitUntilReady();
 }
 
-void Bolt::acquire_sensors()
+void Teststand::acquire_sensors()
 {
     // Acquire the data.
     robot_->ParseSensorData();
@@ -160,7 +160,7 @@ void Bolt::acquire_sensors()
     ++nb_time_we_acquired_sensors_;
 }
 
-void Bolt::send_target_joint_torque(
+void Teststand::send_target_joint_torque(
     const Eigen::Ref<const Eigen::Vector6d> target_joint_torque)
 {
     robot_->joints->SetTorques(target_joint_torque);
@@ -205,18 +205,18 @@ void Bolt::send_target_joint_torque(
     }
 }
 
-void Bolt::request_calibration(
+void Teststand::request_calibration(
     const Eigen::Ref<const Eigen::VectorXd> home_offset_rad)
 {
-    printf("Bolt::calibrate called\n");
+    printf("Teststand::calibrate called\n");
     calib_ctrl_->UpdatePositionOffsets(home_offset_rad);
     calibrate_request_ = true;
 }
 
-void Bolt::request_calibration()
+void Teststand::request_calibration()
 {
-    printf("Bolt::calibrate called\n");
+    printf("Teststand::calibrate called\n");
     calibrate_request_ = true;
 }
 
-}  // namespace bolt
+}  // namespace teststand

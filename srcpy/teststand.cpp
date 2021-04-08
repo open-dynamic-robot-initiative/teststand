@@ -19,24 +19,24 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 
-#include <bolt/bolt.hpp>
+#include <teststand/teststand.hpp>
 
 namespace py = pybind11;
-using namespace bolt;
+using namespace teststand;
 
-PYBIND11_MODULE(bolt, m)
+PYBIND11_MODULE(teststand, m)
 {
-    py::class_<Bolt>(m, "Bolt")
+    py::class_<Teststand>(m, "Teststand")
         .def(py::init<>())
-        .def("initialize", &Bolt::initialize)
-        .def("acquire_sensors", &Bolt::acquire_sensors)
+        .def("initialize", &Teststand::initialize)
+        .def("acquire_sensors", &Teststand::acquire_sensors)
         .def("send_target_joint_torque",
-             &Bolt::send_target_joint_torque,
+             &Teststand::send_target_joint_torque,
              py::arg("target_joint_torque"))
-        .def("get_motor_board_errors", &Bolt::get_motor_board_errors)
-        .def("get_motor_board_enabled", &Bolt::get_motor_board_enabled)
-        .def("get_motor_enabled", &Bolt::get_motor_enabled)
-        .def("get_motor_ready", &Bolt::get_motor_ready)
-        .def("get_joint_positions", &Bolt::get_joint_positions)
-        .def("get_joint_velocities", &Bolt::get_joint_velocities);
+        .def("get_motor_board_errors", &Teststand::get_motor_board_errors)
+        .def("get_motor_board_enabled", &Teststand::get_motor_board_enabled)
+        .def("get_motor_enabled", &Teststand::get_motor_enabled)
+        .def("get_motor_ready", &Teststand::get_motor_ready)
+        .def("get_joint_positions", &Teststand::get_joint_positions)
+        .def("get_joint_velocities", &Teststand::get_joint_velocities);
 }

@@ -8,7 +8,7 @@
 #
 cmake_minimum_required(VERSION 3.10.2)
 
-project(bolt VERSION 1.0.0)
+project(teststand VERSION 1.0.0)
 
 # specify the C++ 17 standard.
 set(CMAKE_CXX_STANDARD 17)
@@ -24,7 +24,7 @@ find_package(blmc_drivers REQUIRED)
 find_package(odri_control_interface REQUIRED)
 find_package(real_time_tools REQUIRED)
 find_package(yaml_utils REQUIRED)
-find_package(PythonModules REQUIRED COMPONENTS robot_properties_bolt)
+find_package(PythonModules REQUIRED COMPONENTS robot_properties_teststand)
 
 # optional dependencies.
 find_package(dynamic_graph_manager QUIET)

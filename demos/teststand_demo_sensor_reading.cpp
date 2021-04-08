@@ -7,14 +7,14 @@
  * This file uses the Solo12 class in a small demo.
  */
 
-#include "bolt/bolt.hpp"
-#include "bolt/utils.hpp"
+#include "teststand/teststand.hpp"
+#include "teststand/utils.hpp"
 
-using namespace bolt;
+using namespace teststand;
 
 static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
 {
-    Bolt& robot = *static_cast<Bolt*>(args);
+    Teststand& robot = *static_cast<Teststand*>(args);
 
     // 0 torques
     Eigen::Vector6d desired_torque = Eigen::Vector6d::Zero();
@@ -93,7 +93,7 @@ int main(int argc, char** argv)
     real_time_tools::RealTimeThread thread;
     enable_ctrl_c();
 
-    Bolt robot;
+    Teststand robot;
     robot.initialize(std::string(argv[1]));
 
     rt_printf("sensor reader is set up \n");

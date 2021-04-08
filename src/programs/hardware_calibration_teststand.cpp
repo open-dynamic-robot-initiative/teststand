@@ -7,7 +7,7 @@
  * @brief This program is used to perform the hardware calibration of the robot.
  * Procedure:
  *  - You must start the robot in a position that is close to the "zero" pose.
- *  - Then start the demo: roscd && sudo ./lib/bolt/hardware_calibration
+ *  - Then start the demo: roscd && sudo ./lib/teststand/hardware_calibration
  * <network_id> The "network_id" is the left column of the output of `ifconfig`
  * in bash.
  *  - The robot is going to find the closest index in a specific direction and
@@ -18,14 +18,14 @@
  *      date to you favorite configuration file.
  */
 
-#include "bolt/utils.hpp"
-#include "bolt/bolt.hpp"
+#include "teststand/utils.hpp"
+#include "teststand/teststand.hpp"
 
-using namespace bolt;
+using namespace teststand;
 
 static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
 {
-    Bolt& robot = *(static_cast<Bolt*>(robot_void_ptr));
+    Teststand& robot = *(static_cast<Teststand*>(robot_void_ptr));
 
     Eigen::Vector6d joint_index_to_zero = Eigen::Vector6d::Zero();
     Eigen::Vector6d dummy_command = Eigen::Vector6d::Zero();
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
     real_time_tools::RealTimeThread thread;
 
-    Bolt robot;
+    Teststand robot;
     robot.initialize(argv[1]);
 
     rt_printf("Controller is set up.\n");

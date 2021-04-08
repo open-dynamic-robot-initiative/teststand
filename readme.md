@@ -1,8 +1,8 @@
-# bolt
+# teststand
 
 ## What it is
 
-Drivers of the bolt robot.
+Drivers of the teststand robot.
 
 ## Authors
 

@@ -5,28 +5,28 @@ set(all_exe_targets)
 # Declare the project library.
 #
 
-add_library(bolt SHARED bolt.cpp)
+add_library(teststand SHARED teststand.cpp)
 # Add includes
 target_include_directories(
-  bolt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  teststand PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
               $<INSTALL_INTERFACE:include>)
 # Link the dependencies.
-target_link_libraries(bolt blmc_drivers::blmc_drivers)
-target_link_libraries(bolt odri_control_interface::odri_control_interface)
-target_link_libraries(bolt real_time_tools::real_time_tools)
-target_link_libraries(bolt yaml_utils::yaml_utils)
-target_link_libraries(bolt Eigen3::Eigen)
+target_link_libraries(teststand blmc_drivers::blmc_drivers)
+target_link_libraries(teststand odri_control_interface::odri_control_interface)
+target_link_libraries(teststand real_time_tools::real_time_tools)
+target_link_libraries(teststand yaml_utils::yaml_utils)
+target_link_libraries(teststand Eigen3::Eigen)
 # YAML parameters.
 string(
   CONCAT odri_control_interface_yaml_path
          "${PythonModules_robot_properties_bolt_PATH}/"
-         "robot_properties_bolt/robot_properties_bolt/odri_control_interface/"
+         "robot_properties_teststand/robot_properties_teststand/odri_control_interface/"
          "bolt_driver.yaml")
 target_compile_definitions(
-  bolt
+  teststand
   PUBLIC ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
 # Export the target.
-list(APPEND all_lib_targets bolt)
+list(APPEND all_lib_targets teststand)
 
 #
 # Hardware calibration program.
@@ -38,12 +38,12 @@ target_include_directories(
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
          $<INSTALL_INTERFACE:include>)
 # Link the dependencies.
-target_link_libraries(bolt_hardware_calibration bolt)
+target_link_libraries(bolt_hardware_calibration teststand)
 # Export the target.
 list(APPEND all_exe_targets bolt_hardware_calibration)
 
 #
-# Optionally compile the dynamic_graph_manager Bolt wrapper.
+# Optionally compile the dynamic_graph_manager Teststand wrapper.
 #
 if(${dynamic_graph_manager_FOUND})
   #
@@ -75,7 +75,7 @@ if(${dynamic_graph_manager_FOUND})
   string(
     CONCAT dynamic_graph_manager_yaml_file
            "${PythonModules_robot_properties_bolt_PATH}/"
-           "robot_properties_bolt/robot_properties_bolt/dynamic_graph_manager/"
+           "robot_properties_teststand/robot_properties_teststand/dynamic_graph_manager/"
            "dgm_parameters_bolt.yaml")
   target_compile_definitions(
     dg_main_bolt
@@ -99,7 +99,7 @@ install(
   DESTINATION include)
 
 foreach(target ${all_exe_targets})
-  # install a symlink of the executable in lib/bolt
+  # install a symlink of the executable in lib/teststand
   string(
     CONCAT symlink_command
            "execute_process("

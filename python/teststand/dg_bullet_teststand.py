@@ -6,8 +6,8 @@ Copyright note valid unless otherwise stated in individual files.
 All rights reserved.
 """
 
-from robot_properties_bolt.config import BoltConfig
-from bolt.dg_bolt_base_bullet import DgBoltBaseRobot
+from robot_properties_teststand.config import BoltConfig
+from teststand.dg_bolt_base_bullet import DgBoltBaseRobot
 
 
 class BoltBulletRobot(DgBoltBaseRobot):

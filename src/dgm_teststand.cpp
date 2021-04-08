@@ -1,17 +1,17 @@
 /**
  * \file dgm_bolt.cpp
- * \brief The hardware wrapper of the bolt robot
+ * \brief The hardware wrapper of the teststand robot
  * \author Maximilien Naveau
  * \date 2018
  *
  * This file defines the TestBench8Motors class.
  */
 
-#include "bolt/dgm_bolt.hpp"
+#include "teststand/dgm_bolt.hpp"
 
 #include "dynamic_graph_manager/ros.hpp"
 
-namespace bolt
+namespace teststand
 {
 DGMBolt::DGMBolt()
 {
@@ -136,4 +136,4 @@ void DGMBolt::calibrate_joint_position()
     bolt_.request_calibration();
 }
 
-}  // namespace bolt
+}  // namespace teststand

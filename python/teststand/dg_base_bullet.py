@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pybullet
 from bullet_utils.env import BulletEnvWithGround
-from robot_properties_bolt.bolt_wrapper import BoltRobot
+from robot_properties_teststand.bolt_wrapper import BoltRobot
 from dynamic_graph_manager.dynamic_graph.device import Device
 from dynamic_graph_manager.robot import Robot
 from dynamic_graph.sot.core.vector_constant import VectorConstant
@@ -18,7 +18,7 @@ from dynamic_graph.sot.core.vector_constant import VectorConstant
 
 class DgBoltBaseRobot(Robot):
     """
-    Base implementation for bolt robot.
+    Base implementation for teststand robot.
     """
 
     def __init__(

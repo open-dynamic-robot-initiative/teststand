@@ -3,13 +3,13 @@
 #
 
 # Python wrapper
-set(wrapper_name bolt_cpp)
+set(wrapper_name ${PROJECT_NAME}_cpp)
 
 add_library(${wrapper_name} MODULE py_bolt.cpp)
 
 target_link_libraries(${wrapper_name} PRIVATE pybind11::module)
 
-target_link_libraries(${wrapper_name} PRIVATE bolt)
+target_link_libraries(${wrapper_name} PRIVATE teststand)
 
 set_target_properties(${wrapper_name} PROPERTIES PREFIX "" SUFFIX
                                                    "${PYTHON_MODULE_EXTENSION}")

@@ -7,7 +7,7 @@ set(all_demo_targets)
 string(
   CONCAT odri_control_interface_yaml_path
          "${PythonModules_robot_properties_bolt_PATH}/"
-         "robot_properties_bolt/robot_properties_bolt/odri_control_interface/"
+         "robot_properties_teststand/robot_properties_teststand/odri_control_interface/"
          "bolt_driver.yaml")
 
 macro(create_demo demo_name)
@@ -36,7 +36,7 @@ macro(create_demo demo_name)
     INCLUDES
     DESTINATION include)
 
-  # Install a symlink of the executable in lib/bolt
+  # Install a symlink of the executable in lib/teststand
   string(
     CONCAT symlink_command
            "execute_process("

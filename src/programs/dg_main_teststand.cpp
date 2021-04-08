@@ -1,14 +1,14 @@
 /**
- * \file bolt.cpp
- * \brief Execute the main program to control the bolt
+ * \file teststand.cpp
+ * \brief Execute the main program to control the teststand
  * \author Maximilien Naveau
  * \date 2018
  *
- * DynamicGraphManager for bolt main executbale.
+ * DynamicGraphManager for teststand main executbale.
  */
 
 #include <fstream>
-#include "bolt/dgm_bolt.hpp"
+#include "teststand/dgm_bolt.hpp"
 
 int main(int, char*[])
 {
@@ -24,7 +24,7 @@ int main(int, char*[])
     }
     YAML::Node param = YAML::LoadFile(yaml_path);
     // Create the dgm.
-    bolt::DGMBolt dgm;
+    teststand::DGMBolt dgm;
 
     // Initialize and run it.
     dgm.initialize(param);

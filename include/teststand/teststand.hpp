@@ -4,7 +4,7 @@
  * @copyright Copyright (c) 2021, New York University and Max Planck
  * Gesellschaft
  *
- * @brief Bolt biped low level drivers.
+ * @brief Teststand biped low level drivers.
  */
 
 #pragma once
@@ -23,7 +23,7 @@ namespace Eigen
 typedef Matrix<double, 6, 1> Vector6d;
 }  // namespace Eigen
 
-namespace bolt
+namespace teststand
 {
 #define BOLT_NB_MOTOR_BOARD 3
 #define BOLT_NB_MOTOR 6
@@ -38,15 +38,15 @@ enum BoltControlState
 };
 
 /**
- * @brief Driver for the Bolt biped robot.
+ * @brief Driver for the Teststand biped robot.
  */
-class Bolt
+class Teststand
 {
 public:
     /**
-     * @brief Bolt is the constructor of the class.
+     * @brief Teststand is the constructor of the class.
      */
-    Bolt();
+    Teststand();
 
     /**
      * @brief initialize the robot by setting aligning the motors and calibrate
@@ -412,4 +412,4 @@ private:
     std::shared_ptr<blmc_drivers::SerialReader> serial_reader_;
 };
 
-}  // namespace bolt
+}  // namespace teststand

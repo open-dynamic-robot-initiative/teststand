@@ -9,14 +9,14 @@
  *
  */
 
-#include "bolt/bolt.hpp"
-#include "bolt/utils.hpp"
+#include "teststand/teststand.hpp"
+#include "teststand/utils.hpp"
 
-using namespace bolt;
+using namespace teststand;
 
 static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
 {
-    Bolt& robot = *(static_cast<Bolt*>(robot_void_ptr));
+    Teststand& robot = *(static_cast<Teststand*>(robot_void_ptr));
 
     Eigen::Vector6d zero_torques = Eigen::Vector6d::Zero();
 
@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 
     real_time_tools::RealTimeThread thread;
 
-    Bolt robot;
+    Teststand robot;
     robot.initialize(argv[1]);
 
     rt_printf("Controller is set up.\n");
