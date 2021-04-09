@@ -16,21 +16,16 @@
 #include "blmc_drivers/serial_reader.hpp"
 #include "odri_control_interface/calibration.hpp"
 #include "odri_control_interface/robot.hpp"
-
-namespace Eigen
-{
-/** @brief Eigen shortcut for vector of size 6. */
-typedef Matrix<double, 6, 1> Vector6d;
-}  // namespace Eigen
+#include "teststand/teststand_abstract_interface.hpp"
 
 namespace teststand
 {
-#define BOLT_NB_MOTOR_BOARD 3
-#define BOLT_NB_MOTOR 6
-#define BOLT_NB_SLIDER 4
+#define TESTSTAND_NB_MOTOR_BOARD 1
+#define TESTSTAND_NB_MOTOR 2
+#define TESTSTAND_NB_SLIDER 0
 
 /** @brief Control state of the robot. */
-enum BoltControlState
+enum ControlState
 {
     initial,
     ready,
@@ -40,7 +35,7 @@ enum BoltControlState
 /**
  * @brief Driver for the Teststand biped robot.
  */
-class Teststand
+class Teststand : public TeststandAbstractInterface
 {
 public:
     /**
@@ -48,33 +43,42 @@ public:
      */
     Teststand();
 
-    /**
-     * @brief initialize the robot by setting aligning the motors and calibrate
-     * the sensors to 0
-     */
-    void initialize(const std::string& network_id);
+    virtual void initialize()
+    {
+        throw std::runtime_error(
+            "Teststand::initialize: Missing the network id argument");
+    }
 
     /**
-     * @brief send_target_torques sends the target currents to the motors
+     * @copydoc TeststandAbstractInterface::initialize
      */
-    void send_target_joint_torque(
-        const Eigen::Ref<const Eigen::Vector6d> target_joint_torque);
+    virtual void initialize(const std::string& network_id);
 
     /**
-     * @brief acquire_sensors acquire all available sensors, WARNING !!!!
-     * this method has to be called prior to any getter to have up to date data.
+     * @copydoc TeststandAbstractInterface::send_target_joint_torque
      */
-    void acquire_sensors();
+    virtual void send_target_joint_torque(
+        const Eigen::Ref<const Eigen::Vector2d> target_joint_torque);
+
+    /**
+     * @copydoc TeststandAbstractInterface::acquire_sensors
+     */
+    virtual bool acquire_sensors();
+
+    /**
+     * @brief Set max current.
+     */
+    virtual void set_max_current(double max_current);
+
+    /**
+     * @copydoc TeststandAbstractInterface::calibrate
+     */
+    virtual void calibrate(const Eigen::Vector2d& home_offset_rad);
 
     /**
      * @brief Wait until the hardware is ready to be controlled.
      */
     void wait_until_ready();
-
-    /**
-     * @brief Fill attitude quaternion.
-     */
-    void fill_base_attitude_quaternion();
 
     /**
      * @brief Request calibration of the joints by moving to the next joint
@@ -98,59 +102,6 @@ public:
      * @return false
      */
     void request_calibration();
-
-    /**
-     * Sensor Data
-     */
-
-    /**
-     * @brief get_joint_positions
-     * @return  the joint angle of each module
-     * WARNING !!!!
-     * The method <acquire_sensors>"()" has to be called
-     * prior to any getter to have up to date data.
-     */
-    const Eigen::Ref<const Eigen::Vector6d> get_joint_positions()
-    {
-        return joint_positions_;
-    }
-
-    /**
-     * @brief get_joint_velocities
-     * @return the joint velocities
-     * WARNING !!!!
-     * The method <acquire_sensors>"()" has to be called
-     * prior to any getter to have up to date data.
-     */
-    const Eigen::Ref<const Eigen::Vector6d> get_joint_velocities()
-    {
-        return joint_velocities_;
-    }
-
-    /**
-     * @brief get_joint_torques
-     * @return the joint torques
-     * WARNING !!!!
-     * The method <acquire_sensors>"()" has to be called
-     * prior to any getter to have up to date data.
-     */
-    const Eigen::Ref<const Eigen::Vector6d> get_joint_torques()
-    {
-        return joint_torques_;
-    }
-
-    /**
-     * @brief get_joint_torques
-     * @return the target joint torques
-     * WARNING !!!!
-     * The method <acquire_sensors>"()" has to be called
-     * prior to any getter to have up to date data.
-
-     */
-    const Eigen::Ref<const Eigen::Vector6d> get_joint_target_torques()
-    {
-        return joint_target_torques_;
-    }
 
     /**
      * @brief get_base_accelerometer
@@ -213,144 +164,22 @@ public:
     }
 
     /**
-     * Hardware Status
-     */
-
-    /**
-     * @brief get_motor_enabled
-     * @return This gives the status (enabled/disabled) of each motors using the
-     * joint ordering convention.
-     */
-    const Eigen::Ref<const Eigen::Matrix<bool, BOLT_NB_MOTOR, 1> >
-    get_motor_enabled()
-    {
-        return motor_enabled_;
-    }
-
-    /**
-     * @brief get_motor_ready
-     * @return This gives the status (enabled/disabled) of each motors using the
-     * joint ordering convention.
-     */
-    const Eigen::Ref<const Eigen::Matrix<bool, BOLT_NB_MOTOR, 1> >
-    get_motor_ready()
-    {
-        return motor_ready_;
-    }
-
-    /**
-     * @brief get_motor_board_enabled
-     * @return This gives the status (enabled/disabled of the onboard control
-     * cards).
-     */
-    const Eigen::Ref<const Eigen::Matrix<bool, BOLT_NB_MOTOR_BOARD, 1> >
-    get_motor_board_enabled()
-    {
-        return motor_board_enabled_;
-    }
-
-    /**
-     * @brief get_motor_board_errors
-     * @return This gives the status (enabled/disabled of the onboard control
-     * cards).
-     */
-    const Eigen::Ref<const Eigen::Matrix<int, BOLT_NB_MOTOR_BOARD, 1> >
-    get_motor_board_errors()
-    {
-        return motor_board_errors_;
-    }
-
-    /**
-     * @brief has_error
-     * @return Returns true if the robot hardware has an error, false otherwise.
-     */
-    bool has_error() const
-    {
-        return robot_->HasError();
-    }
-
-    /*
-     * Additional data
-     */
-
-    /**
-     * @brief Get the slider positions in [0, 1]
-     *
-     * @return Eigen::Ref<Eigen::Matrix<double, BOLT_NB_SLIDER, 1> >
-     */
-    const Eigen::Ref<const Eigen::Matrix<double, BOLT_NB_SLIDER, 1> >
-    get_slider_positions()
-    {
-        return slider_positions_;
-    }
-
-    /**
-     * @brief Get the active estop value
-     *
-     * @return true if the button is pressed.
-     * @return false otherwize.
-     */
-    bool get_active_estop() const
-    {
-        return active_estop_;
-    }
-
-    /**
      * @brief is_calibrating()
      * @return Returns true if the calibration procedure is running right now.
      */
     bool is_calibrating()
     {
-        return (control_state_ == BoltControlState::calibrate) || calibrate_request_;
+        return (control_state_ == ControlState::calibrate) ||
+               calibrate_request_;
     }
 
+protected:
+    /**
+     * @brief Fill attitude quaternion.
+     */
+    void fill_base_attitude_quaternion();
+
 private:
-    /*
-     * Hardware status
-     */
-
-    /** @brief Motor status (enabled/disabled). */
-    Eigen::Matrix<bool, BOLT_NB_MOTOR, 1> motor_enabled_;
-
-    /** @brief Motor readiness to receive commands (ready/not ready). */
-    Eigen::Matrix<bool, BOLT_NB_MOTOR, 1> motor_ready_;
-
-    /** @brief Motor Board status (enabled/disabled). */
-    Eigen::Matrix<bool, BOLT_NB_MOTOR_BOARD, 1> motor_board_enabled_;
-
-    /** @brief Motor Board Error code (int).
-     */
-    Eigen::Matrix<int, BOLT_NB_MOTOR_BOARD, 1> motor_board_errors_;
-
-    /*
-     * Joint data
-     */
-
-    /** @brief Joint positions. */
-    Eigen::Vector6d joint_positions_;
-
-    /** @brief Joint velocities. */
-    Eigen::Vector6d joint_velocities_;
-
-    /** @brief Joint torques. */
-    Eigen::Vector6d joint_torques_;
-
-    /** @brief Target joint torques, reference from the controller. */
-    Eigen::Vector6d joint_target_torques_;
-
-    /*
-     * Additional data
-     */
-
-    /** @brief Name of the network lan: Left column in ifconfig output. */
-    std::string network_id_;
-
-    /** @brief Slider position in [0, 1]. */
-    Eigen::Matrix<double, BOLT_NB_SLIDER, 1> slider_positions_;
-
-    /** @brief E-stop from the slider box. */
-    bool active_estop_;
-
     /** @brief base accelerometer. */
     Eigen::Vector3d base_accelerometer_;
 
@@ -366,12 +195,6 @@ private:
     /** @brief base attitude quaternion. */
     Eigen::Vector4d base_attitude_quaternion_;
 
-    /** @brief Integers from the serial port.
-     * - 4 sliders in [0, 1024]
-     * - emergency stop
-     */
-    std::vector<int> slider_box_data_;
-
     /*
      * Controllers
      */
@@ -380,11 +203,11 @@ private:
     std::shared_ptr<odri_control_interface::JointCalibrator> calib_ctrl_;
 
     /*
-     * Finite state machine of the controbolller.
+     * Finite state machine of the controller.
      */
 
     /** @brief Control state Initial, Ready, Calibration */
-    BoltControlState control_state_;
+    ControlState control_state_;
 
     /** @brief Check if the user called for the joint calibration. */
     bool calibrate_request_;

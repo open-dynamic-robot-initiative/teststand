@@ -27,8 +27,8 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
 {
     Teststand& robot = *(static_cast<Teststand*>(robot_void_ptr));
 
-    Eigen::Vector6d joint_index_to_zero = Eigen::Vector6d::Zero();
-    Eigen::Vector6d dummy_command = Eigen::Vector6d::Zero();
+    Eigen::Vector2d joint_index_to_zero = Eigen::Vector2d::Zero();
+    Eigen::Vector2d dummy_command = Eigen::Vector2d::Zero();
 
     robot.wait_until_ready();
 

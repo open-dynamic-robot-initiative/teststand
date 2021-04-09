@@ -18,7 +18,7 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
 {
     Teststand& robot = *(static_cast<Teststand*>(robot_void_ptr));
 
-    Eigen::Vector6d zero_torques = Eigen::Vector6d::Zero();
+    Eigen::Vector2d zero_torques = Eigen::Vector2d::Zero();
 
     robot.wait_until_ready();
 

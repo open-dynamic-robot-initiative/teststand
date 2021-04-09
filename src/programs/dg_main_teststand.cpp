@@ -8,7 +8,7 @@
  */
 
 #include <fstream>
-#include "teststand/dgm_bolt.hpp"
+#include "teststand/dgm_teststand.hpp"
 
 int main(int, char*[])
 {
@@ -24,7 +24,7 @@ int main(int, char*[])
     }
     YAML::Node param = YAML::LoadFile(yaml_path);
     // Create the dgm.
-    teststand::DGMBolt dgm;
+    teststand::DGMTeststand dgm;
 
     // Initialize and run it.
     dgm.initialize(param);

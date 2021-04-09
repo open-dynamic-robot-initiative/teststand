@@ -1,5 +1,5 @@
 /**
- * @file dgm_bolt.hpp
+ * @file dgm_teststandx.hpp
  * @author Manuel Wuthrich
  * @author Maximilien Naveau
  * @author Julian Viereck
@@ -9,34 +9,28 @@
  * Gesellshaft.
  */
 
-#ifndef DGM_SOLO_HH
-#define DGM_SOLO_HH
+#ifndef DGM_TESTSTAND_HH
+#define DGM_TESTSTAND_HH
 
-#include "teststand/teststand.hpp"
-#include "dynamic_graph_manager/dynamic_graph_manager.hpp"
+#include "teststand/teststand_ti.hpp"
 #include "mim_msgs/srv/joint_calibration.hpp"
+#include "dynamic_graph_manager/dynamic_graph_manager.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
 
 namespace teststand
 {
-class DGMTeststand : public dynamic_graph_manager::DynamicGraphManager
+class DGMTeststandTi : public dynamic_graph_manager::DynamicGraphManager
 {
 public:
     /**
-     * @brief DemoSingleMotor is the constructor.
+     * @brief DGMTeststandTi is the constructor.
      */
-    DGMTeststand();
+    DGMTeststandTi();
 
     /**
-     * @brief ~DemoSingleMotor is the destructor.
+     * @brief ~DGMTeststandTi is the destructor.
      */
-    ~DGMTeststand();
-
-    /**
-     * @brief This function make also sure that the joint velocity do not exceed
-     * a certain value
-     */
-    // bool is_in_safety_mode();
+    ~DGMTeststandTi();
 
     /**
      * @brief initialize_hardware_communication_process is the function that
@@ -45,7 +39,7 @@ public:
     void initialize_hardware_communication_process();
 
     /**
-     * @brief get_sensors_to_map acquieres the sensors data and feed it to the
+     * @brief get_sensors_to_map acquires the sensors data and feeds it to the
      * input/output map
      * @param[in][out] map is the sensors data filled by this function.
      */
@@ -60,14 +54,17 @@ public:
         const dynamic_graph_manager::VectorDGMap& map);
 
     /**
-     * @brief Ros callback for the callibration procedure. Warning the robot
-     * will move to the next the joint index and back to "0" upon this call.
-     * Be sure that no controller are running in parallel.
+     * @brief is_in_safety_mode Implement custom safe-mode detection.
+     */
+    virtual bool is_in_safety_mode();
+
+    /**
+     * @brief ROS callback
      *
-     * @param req nothing
-     * @param res True if everything went well.
-     * @return true if everything went well.
-     * @return false if something went wrong.
+     * @param req
+     * @param res
+     * @return true
+     * @return false
      */
     void calibrate_joint_position_callback(
         mim_msgs::srv::JointCalibration::Request::SharedPtr req,
@@ -80,7 +77,7 @@ private:
      * @param zero_to_index_angle is the angle between the theoretical zero and
      * the next positive angle.
      */
-    void calibrate_joint_position();
+    void calibrate_joint_position(const Eigen::Vector2d& zero_to_index_angle);
 
     /**
      * Entries for the real hardware.
@@ -89,26 +86,25 @@ private:
     /**
      * @brief test_bench_ the real test bench hardware drivers.
      */
-    Teststand teststand_;
+    TeststandTi teststand_;
 
     /**
-     * @brief ctrl_joint_torques_ the joint torques to be sent. Used in this
-     * class to perform a local copy of the control. This is need in order
-     * to send this copy to the Teststand class
+     * @brief ctrl_joint_torques_ the joint torques to be sent
      */
     Eigen::Vector2d ctrl_joint_torques_;
 
     /**
-     * @brief Check if we entered once in the safety mode and stay there if so
-     */
-    bool was_in_safety_mode_;
-
-    /**
      * @brief These are the calibration value extracted from the paramters.
      * They represent the distance between the theorical zero joint angle and
-     * the next jont index.
+     * the next joint index.
      */
     Eigen::Vector2d zero_to_index_angle_from_file_;
+
+    /**
+     * @brief was_in_safety_mode_ Toggle to keep in safety mode once it was
+     * entered.
+     */
+    bool was_in_safety_mode_;
 };
 
 }  // namespace teststand

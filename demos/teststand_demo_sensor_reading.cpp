@@ -17,7 +17,7 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
     Teststand& robot = *static_cast<Teststand*>(args);
 
     // 0 torques
-    Eigen::Vector6d desired_torque = Eigen::Vector6d::Zero();
+    Eigen::Vector2d desired_torque = Eigen::Vector2d::Zero();
     rt_printf("Sensor reading loop started \n");
 
     robot.wait_until_ready();
@@ -64,10 +64,6 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
                          robot.get_base_gyroscope());
             print_vector("act imu lin acc                ",
                          robot.get_base_linear_acceleration());
-            rt_printf("act e-stop                     : %s\n",
-                      robot.get_active_estop() ? "true" : "false");
-            rt_printf("has error                      : %s\n",
-                      robot.has_error() ? "true" : "false");
             rt_printf("\n");
             fflush(stdout);
         }

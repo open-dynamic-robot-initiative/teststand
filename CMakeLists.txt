@@ -20,6 +20,7 @@ find_package(pybind11 REQUIRED)
 
 # local dependencies.
 find_package(ament_cmake REQUIRED)
+find_package(ati_ft_sensor REQUIRED)
 find_package(blmc_drivers REQUIRED)
 find_package(odri_control_interface REQUIRED)
 find_package(real_time_tools REQUIRED)

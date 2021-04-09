@@ -6,11 +6,11 @@ set(all_demo_targets)
 
 string(
   CONCAT odri_control_interface_yaml_path
-         "${PythonModules_robot_properties_bolt_PATH}/"
+         "${PythonModules_robot_properties_teststand_PATH}/"
          "robot_properties_teststand/robot_properties_teststand/odri_control_interface/"
-         "bolt_driver.yaml")
+         "teststand_driver.yaml")
 
-macro(create_demo demo_name)
+macro(CREATE_TESTSTAND_DEMO demo_name)
   # Add the executable of the demo.
   add_executable(${demo_name} ${demo_name}.cpp)
 
@@ -19,7 +19,7 @@ macro(create_demo demo_name)
                         $<INSTALL_INTERFACE:include>)
 
   # Add the dependencies.
-  target_link_libraries(${demo_name} ${PROJECT_NAME})
+  target_link_libraries(${demo_name} teststand)
 
   # Check if the file exists. if(package_name AND resource_path)
   target_compile_definitions(
@@ -50,14 +50,12 @@ macro(create_demo demo_name)
   install(CODE ${symlink_command})
 
 
-endmacro(create_demo demo_name)
+endmacro(CREATE_TESTSTAND_DEMO demo_name)
 
 #
 # Build demos.
 #
 
-create_demo(bolt_demo_pd)
-
-create_demo(bolt_demo_calibration)
-
-create_demo(bolt_demo_sensor_reading)
+create_teststand_demo(teststand_demo_pd)
+create_teststand_demo(teststand_demo_calibration)
+create_teststand_demo(teststand_demo_sensor_reading)

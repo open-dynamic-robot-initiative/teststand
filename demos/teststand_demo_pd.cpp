@@ -23,14 +23,14 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
     double dt = 0.001;
     double freq = 0.3;
     double amplitude = M_PI / 8.0;
-    Eigen::Vector6d desired_joint_position = Eigen::Vector6d::Zero();
-    Eigen::Vector6d desired_torque = Eigen::Vector6d::Zero();
+    Eigen::Vector2d desired_joint_position = Eigen::Vector2d::Zero();
+    Eigen::Vector2d desired_torque = Eigen::Vector2d::Zero();
 
-    Eigen::Vector6d init_pose;
-    Eigen::Matrix<bool, 6, 1> motor_enabled;
+    Eigen::Vector2d init_pose;
+    Eigen::Matrix<bool, 2, 1> motor_enabled;
 
     robot.acquire_sensors();
-    Eigen::Vector6d initial_joint_positions = robot.get_joint_positions();
+    Eigen::Vector2d initial_joint_positions = robot.get_joint_positions();
 
     rt_printf("control loop started \n");
 
@@ -48,7 +48,7 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
         // Desired pose and vel
         desired_joint_position =
             initial_joint_positions +
-            Eigen::Vector6d::Ones() * amplitude * sin(2 * M_PI * freq * t);
+            Eigen::Vector2d::Ones() * amplitude * sin(2 * M_PI * freq * t);
         t += dt;
 
         // we implement here a small pd control at the current level
@@ -66,9 +66,6 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
             print_vector("act joint_pos  : ", robot.get_joint_positions());
             print_vector("act joint_vel  : ", robot.get_joint_velocities());
             print_vector("act slider pos : ", robot.get_slider_positions());
-            rt_printf("act e-stop     : %s\n",
-                      robot.get_active_estop() ? "true" : "false");
-
             fflush(stdout);
         }
         ++count;

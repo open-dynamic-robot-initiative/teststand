@@ -2,26 +2,34 @@ set(all_lib_targets)
 set(all_exe_targets)
 
 #
-# Declare the project library.
+# YAML parameters.
 #
+string(
+  CONCAT odri_control_interface_yaml_path
+         "${PythonModules_robot_properties_teststand_PATH}/"
+         "robot_properties_teststand/robot_properties_teststand/"
+         "odri_control_interface/teststand_driver.yaml")
+string(
+  CONCAT dynamic_graph_manager_yaml_file
+         "${PythonModules_robot_properties_teststand_PATH}/"
+         "robot_properties_teststand/robot_properties_teststand/"
+         "dynamic_graph_manager/dgm_parameters_teststand.yaml")
 
+#
+# Declare the teststand library.
+#
 add_library(teststand SHARED teststand.cpp)
 # Add includes
 target_include_directories(
   teststand PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-              $<INSTALL_INTERFACE:include>)
+                   $<INSTALL_INTERFACE:include>)
 # Link the dependencies.
 target_link_libraries(teststand blmc_drivers::blmc_drivers)
+target_link_libraries(teststand ati_ft_sensor::ati_ft_sensor)
 target_link_libraries(teststand odri_control_interface::odri_control_interface)
 target_link_libraries(teststand real_time_tools::real_time_tools)
 target_link_libraries(teststand yaml_utils::yaml_utils)
 target_link_libraries(teststand Eigen3::Eigen)
-# YAML parameters.
-string(
-  CONCAT odri_control_interface_yaml_path
-         "${PythonModules_robot_properties_bolt_PATH}/"
-         "robot_properties_teststand/robot_properties_teststand/odri_control_interface/"
-         "bolt_driver.yaml")
 target_compile_definitions(
   teststand
   PUBLIC ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
@@ -29,61 +37,123 @@ target_compile_definitions(
 list(APPEND all_lib_targets teststand)
 
 #
-# Hardware calibration program.
+# Teststand hardware calibration program.
 #
-add_executable(bolt_hardware_calibration programs/hardware_calibration.cpp)
+add_executable(teststand_hardware_calibration
+               programs/hardware_calibration_teststand.cpp)
 # Add the include dependencies.
 target_include_directories(
-  bolt_hardware_calibration
+  teststand_hardware_calibration
   PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
          $<INSTALL_INTERFACE:include>)
 # Link the dependencies.
-target_link_libraries(bolt_hardware_calibration teststand)
+target_link_libraries(teststand_hardware_calibration teststand)
 # Export the target.
-list(APPEND all_exe_targets bolt_hardware_calibration)
+list(APPEND all_exe_targets teststand_hardware_calibration)
+
+#
+# Declare the teststand_ti library.
+#
+add_library(teststand_ti SHARED teststand_ti.cpp)
+# Add includes
+target_include_directories(
+  teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                      $<INSTALL_INTERFACE:include>)
+# Link the dependencies.
+target_link_libraries(teststand_ti ati_ft_sensor::ati_ft_sensor)
+target_link_libraries(teststand_ti blmc_drivers::blmc_drivers)
+target_link_libraries(teststand_ti real_time_tools::real_time_tools)
+target_link_libraries(teststand_ti yaml_utils::yaml_utils)
+target_link_libraries(teststand_ti Eigen3::Eigen)
+# Export the target.
+list(APPEND all_lib_targets teststand_ti)
+
+#
+# Teststand hardware calibration program.
+#
+add_executable(teststand_ti_hardware_calibration
+               programs/hardware_calibration_teststand_ti.cpp)
+# Add the include dependencies.
+target_include_directories(
+  teststand_ti_hardware_calibration
+  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:include>)
+# Link the dependencies.
+target_link_libraries(teststand_ti_hardware_calibration teststand_ti)
+# Export the target.
+list(APPEND all_exe_targets teststand_ti_hardware_calibration)
 
 #
 # Optionally compile the dynamic_graph_manager Teststand wrapper.
 #
 if(${dynamic_graph_manager_FOUND})
   #
-  # create library
+  # create dgm_teststand library
   #
-  add_library(dgm_bolt SHARED dgm_bolt.cpp)
+  add_library(dgm_teststand SHARED dgm_teststand.cpp)
   # Add the include dependencies.
   target_include_directories(
-    dgm_bolt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                    $<INSTALL_INTERFACE:include>)
+    dgm_teststand PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                         $<INSTALL_INTERFACE:include>)
   # Link the dependencies.
-  target_link_libraries(dgm_bolt ${PROJECT_NAME})
-  target_link_libraries(dgm_bolt dynamic_graph_manager::dynamic_graph_manager)
+  target_link_libraries(dgm_teststand ${PROJECT_NAME})
+  target_link_libraries(dgm_teststand
+                        dynamic_graph_manager::dynamic_graph_manager)
   # Export the target.
-  list(APPEND all_lib_targets dgm_bolt)
+  list(APPEND all_lib_targets dgm_teststand)
 
   #
-  # Create the robot executable.
+  # Create the teststand executable.
   #
-  add_executable(dg_main_bolt programs/dg_main_bolt.cpp)
+  add_executable(dg_main_teststand programs/dg_main_teststand.cpp)
   # Add the include dependencies.
   target_include_directories(
-    dg_main_bolt
+    dg_main_teststand
     PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
            ${dynamic_graph_manager_INCLUDE_DIR} $<INSTALL_INTERFACE:include>)
   # Link the dependencies.
-  target_link_libraries(dg_main_bolt dgm_bolt)
-  # YAML parameters.
-  string(
-    CONCAT dynamic_graph_manager_yaml_file
-           "${PythonModules_robot_properties_bolt_PATH}/"
-           "robot_properties_teststand/robot_properties_teststand/dynamic_graph_manager/"
-           "dgm_parameters_bolt.yaml")
+  target_link_libraries(dg_main_teststand dgm_teststand)
   target_compile_definitions(
-    dg_main_bolt
-    PUBLIC DYNAMIC_GRAPH_MANAGER_YAML_PATH="${dynamic_graph_manager_yaml_file}"
-           ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
+    dg_main_teststand
+    PUBLIC
+      DYNAMIC_GRAPH_MANAGER_YAML_PATH="${dynamic_graph_manager_yaml_file}"
+      ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
   # Export.
-  list(APPEND all_exe_targets dg_main_bolt)
+  list(APPEND all_exe_targets dg_main_teststand)
 
+  #
+  # create dgm_teststand library
+  #
+  add_library(dgm_teststand_ti SHARED dgm_teststand_ti.cpp)
+  # Add the include dependencies.
+  target_include_directories(
+    dgm_teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                            $<INSTALL_INTERFACE:include>)
+  # Link the dependencies.
+  target_link_libraries(dgm_teststand_ti ${PROJECT_NAME})
+  target_link_libraries(dgm_teststand_ti
+                        dynamic_graph_manager::dynamic_graph_manager)
+  # Export the target.
+  list(APPEND all_lib_targets dgm_teststand_ti)
+
+  #
+  # Create the teststand executable.
+  #
+  add_executable(dg_main_teststand_ti programs/dg_main_teststand_ti.cpp)
+  # Add the include dependencies.
+  target_include_directories(
+    dg_main_teststand_ti
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+           ${dynamic_graph_manager_INCLUDE_DIR} $<INSTALL_INTERFACE:include>)
+  # Link the dependencies.
+  target_link_libraries(dg_main_teststand_ti dgm_teststand_ti)
+  target_compile_definitions(
+    dg_main_teststand_ti
+    PUBLIC
+      DYNAMIC_GRAPH_MANAGER_YAML_PATH="${dynamic_graph_manager_yaml_file}"
+      ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
+  # Export.
+  list(APPEND all_exe_targets dg_main_teststand_ti)
 endif(${dynamic_graph_manager_FOUND})
 
 #
@@ -108,7 +178,6 @@ foreach(target ${all_exe_targets})
            "execute_process("
            "  COMMAND ${CMAKE_COMMAND} -E create_symlink "
            "  ${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME}/${target}"
-           "  ${CMAKE_INSTALL_PREFIX}/bin/${target} )"
-  )
+           "  ${CMAKE_INSTALL_PREFIX}/bin/${target} )")
   install(CODE ${symlink_command})
 endforeach()

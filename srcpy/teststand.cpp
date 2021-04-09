@@ -19,24 +19,41 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 
-#include <teststand/teststand.hpp>
+#include "teststand/teststand.hpp"
+#include "teststand/teststand_ti.hpp"
 
 namespace py = pybind11;
 using namespace teststand;
 
 PYBIND11_MODULE(teststand, m)
 {
-    py::class_<Teststand>(m, "Teststand")
-        .def(py::init<>())
-        .def("initialize", &Teststand::initialize)
-        .def("acquire_sensors", &Teststand::acquire_sensors)
-        .def("send_target_joint_torque",
-             &Teststand::send_target_joint_torque,
-             py::arg("target_joint_torque"))
-        .def("get_motor_board_errors", &Teststand::get_motor_board_errors)
-        .def("get_motor_board_enabled", &Teststand::get_motor_board_enabled)
-        .def("get_motor_enabled", &Teststand::get_motor_enabled)
-        .def("get_motor_ready", &Teststand::get_motor_ready)
-        .def("get_joint_positions", &Teststand::get_joint_positions)
-        .def("get_joint_velocities", &Teststand::get_joint_velocities);
+    // py::class_<Teststand>(m, "Teststand")
+    //     .def(py::init<>())
+    //     .def("initialize",
+    //          py::overload_cast<const std::string&>(&Teststand::initialize))
+    //     .def("acquire_sensors", &Teststand::acquire_sensors)
+    //     .def("send_target_joint_torque",
+    //          &Teststand::send_target_joint_torque,
+    //          py::arg("target_joint_torque"))
+    //     .def("get_motor_board_errors", &Teststand::get_motor_board_errors)
+    //     .def("get_motor_board_enabled", &Teststand::get_motor_board_enabled)
+    //     .def("get_motor_enabled", &Teststand::get_motor_enabled)
+    //     .def("get_motor_ready", &Teststand::get_motor_ready)
+    //     .def("get_joint_positions", &Teststand::get_joint_positions)
+    //     .def("get_joint_velocities", &Teststand::get_joint_velocities);
+
+    // py::class_<TeststandTi>(m, "TeststandTi")
+    //     .def(py::init<>())
+    //     .def("initialize",
+    //          py::overload_cast<const std::string&>(&Teststand::initialize))
+    //     .def("acquire_sensors", &Teststand::acquire_sensors)
+    //     .def("send_target_joint_torque",
+    //          &Teststand::send_target_joint_torque,
+    //          py::arg("target_joint_torque"))
+    //     .def("get_motor_board_errors", &Teststand::get_motor_board_errors)
+    //     .def("get_motor_board_enabled", &Teststand::get_motor_board_enabled)
+    //     .def("get_motor_enabled", &Teststand::get_motor_enabled)
+    //     .def("get_motor_ready", &Teststand::get_motor_ready)
+    //     .def("get_joint_positions", &Teststand::get_joint_positions)
+    //     .def("get_joint_velocities", &Teststand::get_joint_velocities);
 }
