@@ -12,7 +12,7 @@
 int main(int, char*[])
 {
     // Get the dynamic_graph_manager config file.
-    std::string yaml_path = ROBOT_PROPERTIES_YAML_PATH;
+    std::string yaml_path = DYNAMIC_GRAPH_MANAGER_YAML_PATH;
     std::cout << "Loading paramters from " << yaml_path << std::endl;
     YAML::Node param = YAML::LoadFile(yaml_path);
 

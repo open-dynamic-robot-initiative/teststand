@@ -68,7 +68,7 @@ public:
     /**
      * @brief Set max current.
      */
-    virtual void set_max_current();
+    virtual void set_max_current(double max_current);
 
     /**
      * @copydoc TeststandAbstractInterface::calibrate

@@ -130,7 +130,7 @@ if(${dynamic_graph_manager_FOUND})
     dgm_teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                             $<INSTALL_INTERFACE:include>)
   # Link the dependencies.
-  target_link_libraries(dgm_teststand_ti ${PROJECT_NAME})
+  target_link_libraries(dgm_teststand_ti teststand_ti)
   target_link_libraries(dgm_teststand_ti
                         dynamic_graph_manager::dynamic_graph_manager)
   # Export the target.

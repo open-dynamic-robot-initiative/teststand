@@ -85,6 +85,11 @@ void TeststandTi::initialize()
     // can_motor_boards_[1]->wait_until_ready();
 }
 
+void TeststandTi::set_max_current(double max_current)
+{
+    printf("set_max_current() not available with the TI drivers.");
+}
+
 bool TeststandTi::acquire_sensors()
 {
     try
