@@ -11,6 +11,7 @@
 
     <depend>mpi_cmake_modules</depend>
     <depend>pybind11</depend>
+    <depend>ati_ft_sensor</depend>
     <depend>blmc_drivers</depend>
     <depend>odri_control_interface</depend>
     <depend>real_time_tools</depend>
