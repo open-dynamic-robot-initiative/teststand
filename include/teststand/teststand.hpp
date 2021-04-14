@@ -233,6 +233,11 @@ private:
      * @brief Reader for serial port to read arduino slider values.
      */
     std::shared_ptr<blmc_drivers::SerialReader> serial_reader_;
+
+    /**
+     * @brief ATI sensor.
+     */
+    ati_ft_sensor::AtiFTSensor ati_sensor_;
 };
 
 }  // namespace teststand

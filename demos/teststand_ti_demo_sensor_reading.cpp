@@ -34,22 +34,16 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
             rt_printf("\33[H\33[2J");  // clear screen
             rt_printf("Sensory data:");
             rt_printf("\n");
-            print_vector("des joint_torque               ",
+            print_vector("des joint_tau                  ",
                          desired_torque);
-            print_vector("act joint_position             ",
+            print_vector("act joint_pos                  ",
                          robot.get_joint_positions());
-            print_vector("act joint_velocity             ",
+            print_vector("act joint_vel                  ",
                          robot.get_joint_velocities());
-            print_vector("act joint torque               ",
+            print_vector("act joint torq                 ",
                          robot.get_joint_target_torques());
-            print_vector("act joint target torque        ",
+            print_vector("act joint target torq          ",
                          robot.get_joint_torques());
-            print_vector("act height sensor              ",
-                         robot.get_height_sensors());
-            print_vector("act ati force                  ",
-                         robot.get_ati_force());
-            print_vector("act ati torque                 ",
-                         robot.get_ati_torque());
             print_vector_bool("act status motor ready         ",
                          robot.get_motor_ready());
             print_vector_bool("act status motor enabled       ",

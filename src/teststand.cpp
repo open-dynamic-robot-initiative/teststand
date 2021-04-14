@@ -41,6 +41,13 @@ void Teststand::set_max_current(double max_current)
 
 void Teststand::initialize(const std::string& network_id)
 {
+    // ATI sensor initialization.
+    ati_sensor_.initialize();
+    // Wait to make sure there is a first package when acquire_sensors() later.
+    real_time_tools::Timer::sleep_sec(0.5);
+    // Calibrate the zeros of the ati sensor given the current measurement.
+    ati_sensor_.setBias();
+
     // Main driver interface.
     robot_ = odri_control_interface::RobotFromYamlFile(
         network_id, ODRI_CONTROL_INTERFACE_YAML_PATH);
@@ -87,24 +94,10 @@ bool Teststand::acquire_sensors()
     base_attitude_quaternion_ = robot_->imu->GetAttitudeQuaternion();
     base_linear_acceleration_ = robot_->imu->GetLinearAcceleration();
 
-    // acquire the slider positions
-    // if (serial_reader_->fill_vector(slider_box_data_) > 10)
-    // {
-    //     robot_->ReportError();
-    //     if(nb_time_we_acquired_sensors_ % 2000 == 0)
-    //     {
-    //         robot_->ReportError(
-    //         "The slider box is not responding correctly, "
-    //         "10 iteration are missing.");
-    //     }
-    // }
-    // for (unsigned i = 0; i < slider_positions_.size(); ++i)
-    // {
-    //     // acquire the slider
-    //     slider_positions_(i) = double(slider_box_data_[i + 1]) / 1024.;
-    // }
-    // // acquire the e-stop from the slider box
-    // active_estop_ = slider_box_data_[0] == 0;
+    height_sensors_states_(i) =
+                1.0701053378814493 -
+                1.0275690598232334 *
+                robot_->robot_if->motor_drivers[0].adc[0];
 
     /**
      * The different status.
@@ -119,6 +112,15 @@ bool Teststand::acquire_sensors()
     motor_enabled_[1] = robot_->joints->GetEnabled()[1];
     motor_ready_[0] = robot_->joints->GetReady()[0];
     motor_ready_[1] = robot_->joints->GetReady()[1];
+
+    // Ati sensor readings.
+    ati_sensor_.getFT(&ati_force_(0), &ati_torque_(0));
+    // Rotate the force and torque values, such that pressing on the force
+    // sensor creates a positive force.
+    ati_force_(0) *= -1;
+    ati_force_(2) *= -1;
+    ati_torque_(0) *= -1;
+    ati_torque_(2) *= -1;
 
     ++nb_time_we_acquired_sensors_;
 
