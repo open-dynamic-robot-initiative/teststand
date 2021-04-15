@@ -7,9 +7,8 @@
  * @brief Implementing the Teststand driver with the TI board and CAN protocol.
  */
 
-#include "teststand/teststand_ti.hpp"
-
 #include <math.h>
+#include "teststand/teststand_ti.hpp"
 
 namespace teststand
 {
@@ -21,8 +20,6 @@ TeststandTi::TeststandTi(): TeststandAbstractInterface()
     can_motor_boards_.fill(nullptr);
     motors_.fill(nullptr);
     // joints_ nothing to be done.
-    sliders_.fill(nullptr);
-    contact_sensors_.fill(nullptr);
     height_sensors_.fill(nullptr);
 }
 
@@ -40,8 +37,6 @@ void TeststandTi::initialize()
         std::make_shared<blmc_drivers::CanBusMotorBoard>(can_buses_[0]);
 
     // can 0.
-    contact_sensors_[0] =
-        std::make_shared<blmc_drivers::AnalogSensor>(can_motor_boards_[0], 0);
     height_sensors_[0] =
         std::make_shared<blmc_drivers::AnalogSensor>(can_motor_boards_[0], 1);
     // motor_hfe.
@@ -62,16 +57,6 @@ void TeststandTi::initialize()
     kd.fill(0.05);
     joints_.set_position_control_gains(kp, kd);
 
-
-    // can_buses_[1] = std::make_shared<blmc_drivers::CanBus>("can1");
-    // can_motor_boards_[1] =
-    //     std::make_shared<blmc_drivers::CanBusMotorBoard>(can_buses_[1]);
-    // can 1.
-    // sliders_[0] =
-    //     std::make_shared<blmc_drivers::AnalogSensor>(can_motor_boards_[1], 0);
-    // sliders_[1] =
-    //     std::make_shared<blmc_drivers::AnalogSensor>(can_motor_boards_[1], 1);
-
     // ATI sensor initialization.
     ati_sensor_.initialize();
     // Wait to make sure there is a first package when acquire_sensors() later.
@@ -85,7 +70,7 @@ void TeststandTi::initialize()
     // can_motor_boards_[1]->wait_until_ready();
 }
 
-void TeststandTi::set_max_current(double max_current)
+void TeststandTi::set_max_current(double)
 {
     printf("set_max_current() not available with the TI drivers.");
 }
@@ -111,27 +96,15 @@ bool TeststandTi::acquire_sensors()
         /**
          * Additional data
          */
-        // acquire the slider positions
-        // for (unsigned i = 0; i < slider_positions_.size(); ++i)
-        // {
-        //     // acquire the slider
-        //     slider_positions_(i) =
-        //         sliders_[i]->get_measurement()->newest_element();
-        // }
 
-        for (unsigned i = 0; i < contact_sensors_states_.size(); ++i)
-        {
-            // acquire the current contact states
-            contact_sensors_states_(i) =
-                contact_sensors_[i]->get_measurement()->newest_element();
-            // acquire the height sensor.
-            // Transforms the measurement into a rough height measurement of the
-            // hip mounting point above the table.
-            height_sensors_states_(i) =
-                1.0701053378814493 -
-                1.0275690598232334 *
-                    height_sensors_[i]->get_measurement()->newest_element();
-        }
+        // acquire the height sensor.
+        // Transforms the measurement into a height measurement between
+        // - the center of the HFE joint
+        // - and the mounting point **above** the table.
+        height_sensors_states_(0) =
+            1.0701053378814493 - 0.017 -
+            1.0275690598232334 *
+                height_sensors_[0]->get_measurement()->newest_element();
 
         /**
          * Ati sensor readings.

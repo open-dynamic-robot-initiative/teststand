@@ -7,11 +7,9 @@
  * @brief Implement the Teststand class.
  */
 
-#include "teststand/teststand.hpp"
-
-#include <cmath>
-
 #include "odri_control_interface/utils.hpp"
+#include "real_time_tools/timer.hpp"
+#include "teststand/teststand.hpp"
 
 namespace teststand
 {
@@ -55,10 +53,6 @@ void Teststand::initialize(const std::string& network_id)
     calib_ctrl_ = odri_control_interface::JointCalibratorFromYamlFile(
         ODRI_CONTROL_INTERFACE_YAML_PATH, robot_->joints);
 
-    // Use a serial port to read slider values.
-    serial_reader_ = std::make_shared<blmc_drivers::SerialReader>(
-        "serial_port", TESTSTAND_NB_SLIDER + 1);
-
     // Initialize the robot.
     robot_->Init();
 }
@@ -94,8 +88,8 @@ bool Teststand::acquire_sensors()
     base_attitude_quaternion_ = robot_->imu->GetAttitudeQuaternion();
     base_linear_acceleration_ = robot_->imu->GetLinearAcceleration();
 
-    height_sensors_states_(i) =
-                1.0701053378814493 -
+    height_sensors_states_(0) =
+                1.0701053378814493 - 0.017 -
                 1.0275690598232334 *
                 robot_->robot_if->motor_drivers[0].adc[0];
 
@@ -189,6 +183,11 @@ void Teststand::request_calibration()
 void Teststand::calibrate(const Eigen::Vector2d& home_offset_rad)
 {
     calib_ctrl_->UpdatePositionOffsets(home_offset_rad);
+    robot_->RunCalibration(calib_ctrl_);
+}
+
+void Teststand::calibrate()
+{
     robot_->RunCalibration(calib_ctrl_);
 }
 

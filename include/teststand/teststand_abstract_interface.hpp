@@ -10,6 +10,7 @@
 #define TeststandAbstractInterface_H
 
 #include <Eigen/Eigen>
+#include "teststand/utils.hpp"
 
 namespace teststand
 {
@@ -49,8 +50,6 @@ public:
         joint_gear_ratios_.fill(0.0);
         joint_encoder_index_.fill(0.0);
         joint_zero_positions_.fill(0.0);
-        slider_positions_.fill(0.0);
-        contact_sensors_states_.fill(0.0);
         height_sensors_states_.fill(0.0);
         motor_max_current_.fill(0.0);
         motor_enabled_.fill(false);
@@ -102,6 +101,28 @@ public:
      * @return false if failure
      */
     virtual void calibrate(const Eigen::Vector2d& home_offset_rad) = 0;
+
+    /** @brief Print all the internal data. */     
+    void print_all()
+    {
+        print_vector("motor_inertias:         ", motor_inertias_);
+        print_vector("motor_torque_constants: ", motor_torque_constants_);
+        print_vector("joint_positions:        ", joint_positions_);
+        print_vector("joint_velocities:       ", joint_velocities_);
+        print_vector("joint_torques:          ", joint_torques_);
+        print_vector("joint_target_torques:   ", joint_target_torques_);
+        print_vector("joint_gear_ratios:      ", joint_gear_ratios_);
+        print_vector("joint_encoder_index:    ", joint_encoder_index_);
+        print_vector("joint_zero_positions:   ", joint_zero_positions_);
+        print_vector("height_sensors_states:  ", height_sensors_states_);
+        print_vector("motor_max_current:      ", motor_max_current_);
+        print_vector_bool("motor_enabled:          ", motor_enabled_);
+        print_vector_bool("motor_ready:            ", motor_ready_);
+        print_vector_bool("motor_board_enabled:    ", motor_board_enabled_);
+        print_vector_int("motor_board_errors:     ", motor_board_errors_);
+        print_vector("ati_force:              ", ati_force_);
+        print_vector("ati_torque:             ", ati_torque_);
+    }
 
     /**
      * @brief get_motor_inertias
@@ -197,37 +218,13 @@ public:
     }
 
     /**
-     * @brief get_slider_positions
-     * WARNING !!!! The method acquire_sensors() has to be called prior to
-     * any getter to have up to date data.
-     *
-     * @return the current sliders positions.
-     */
-    const Eigen::Ref<Eigen::Vector2d> get_slider_positions()
-    {
-        return slider_positions_;
-    }
-
-    /**
      * @brief get_contact_sensors_states
      * WARNING !!!! The method acquire_sensors() has to be called prior to
      * any getter to have up to date data.
      *
      * @return the state of the contacts states
      */
-    const Eigen::Ref<VectorContact> get_contact_sensors_states()
-    {
-        return contact_sensors_states_;
-    }
-
-    /**
-     * @brief get_contact_sensors_states
-     * WARNING !!!! The method acquire_sensors() has to be called prior to
-     * any getter to have up to date data.
-     *
-     * @return the state of the contacts states
-     */
-    const Eigen::Ref<VectorContact> get_height_sensors()
+    const Eigen::Ref<VectorContact> get_height_sensor()
     {
         return height_sensors_states_;
     }
@@ -365,17 +362,6 @@ protected:
     /**
      * Additional data
      */
-
-    /**
-     * @brief slider_positions_ is the position of the linear potentiometer.
-     * Can be used as a joystick input.
-     */
-    Eigen::Vector2d slider_positions_;
-
-    /**
-     * @brief contact_sensors_ is contact sensors at the foot
-     */
-    VectorContact contact_sensors_states_;
 
     /**
      * @brief height_sensors_ is the height position of the base.

@@ -64,12 +64,9 @@ void DGMTeststand::get_sensors_to_map(dynamic_graph_manager::VectorDGMap& map)
     /**
      * Additional data
      */
-    map.at("base_accelerometer") = teststand_.get_base_accelerometer();
-    map.at("base_gyroscope") = teststand_.get_base_gyroscope();
-    map.at("base_attitude") = teststand_.get_base_attitude();
-    map.at("base_linear_acceleration") = teststand_.get_base_linear_acceleration();
-    map.at("base_attitude_quaternion") = teststand_.get_base_attitude_quaternion();
-    map.at("slider_positions") = teststand_.get_slider_positions();
+    map.at("height_sensors") = teststand_.get_height_sensor();
+    map.at("ati_force") = teststand_.get_ati_force();
+    map.at("ati_torque") = teststand_.get_ati_torque();
 
     /**
      * Robot status

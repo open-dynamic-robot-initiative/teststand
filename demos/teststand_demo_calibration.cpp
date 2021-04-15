@@ -21,33 +21,18 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
     Eigen::Vector2d zero_torques = Eigen::Vector2d::Zero();
 
     robot.wait_until_ready();
-
-    // ask for calibration
-    robot.request_calibration();
-
-    // The calibration commend is computed in the send_target_joint_torque.
-    real_time_tools::Spinner spinner;
-    spinner.set_period(0.001);
     rt_printf("Running calibration...\n");
-    while (!CTRL_C_DETECTED && robot.is_calibrating())
-    {
-        robot.acquire_sensors();
-        robot.send_target_joint_torque(zero_torques);
-        spinner.spin();
-    }
+    robot.calibrate();
     rt_printf("Running calibration... Done.\n");
 
     rt_printf("Go idle indefinitely, ctrl+c to quit.\n");
-    robot.send_target_joint_torque(zero_torques);
-    int count = 0;
+    real_time_tools::Spinner spinner;
     spinner.set_period(0.001);
     while (!CTRL_C_DETECTED)
     {
         robot.acquire_sensors();
-        // re-send 0 torque command
         robot.send_target_joint_torque(zero_torques);
         spinner.spin();
-        ++count;
     }
 
     CTRL_C_DETECTED = true;

@@ -16,9 +16,8 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
 {
     Teststand& robot = *static_cast<Teststand*>(args);
 
-    // Using conversion from PD gains from example.cpp
-    double kp = 3.0 * 9 * 0.025;
-    double kd = 0.1 * 9 * 0.025;
+    double kp = 3.0;
+    double kd = 0.05;
     double t = 0.0;
     double dt = 0.001;
     double freq = 0.3;
@@ -29,13 +28,14 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
     Eigen::Vector2d init_pose;
     Eigen::Matrix<bool, 2, 1> motor_enabled;
 
+    rt_printf("Wait until ready... \n");
+    robot.wait_until_ready();
+    rt_printf("Calibrating... \n");
+    robot.calibrate();
+
+    rt_printf("Control loop started. \n");
     robot.acquire_sensors();
     Eigen::Vector2d initial_joint_positions = robot.get_joint_positions();
-
-    rt_printf("control loop started \n");
-
-    robot.wait_until_ready();
-
     size_t count = 0;
     while (!CTRL_C_DETECTED)
     {
@@ -60,12 +60,10 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
         if ((count % 1000) == 0)
         {
             rt_printf("\33[H\33[2J");  // clear screen
-            print_vector("des joint_tau  : ", desired_torque);
-            print_vector("des joint_pos  : ", desired_joint_position);
+            rt_printf("Sensory data:");
             rt_printf("\n");
-            print_vector("act joint_pos  : ", robot.get_joint_positions());
-            print_vector("act joint_vel  : ", robot.get_joint_velocities());
-            print_vector("act slider pos : ", robot.get_slider_positions());
+            robot.print_all();
+            rt_printf("\n");
             fflush(stdout);
         }
         ++count;
@@ -91,11 +89,8 @@ int main(int argc, char** argv)
 
     Teststand robot;
     robot.initialize(std::string(argv[1]));
-
-    rt_printf("controller is set up \n");
     thread.create_realtime_thread(&control_loop, &robot);
 
-    rt_printf("control loop started \n");
     while (!CTRL_C_DETECTED)
     {
         real_time_tools::Timer::sleep_sec(0.001);

@@ -13,6 +13,7 @@
 
 #include <Eigen/Eigen>
 
+#include "AtiFTSensor.h"
 #include "blmc_drivers/serial_reader.hpp"
 #include "odri_control_interface/calibration.hpp"
 #include "odri_control_interface/robot.hpp"
@@ -74,6 +75,11 @@ public:
      * @copydoc TeststandAbstractInterface::calibrate
      */
     virtual void calibrate(const Eigen::Vector2d& home_offset_rad);
+    
+    /**
+     * @copydoc TeststandAbstractInterface::calibrate
+     */
+    void calibrate();
 
     /**
      * @brief Wait until the hardware is ready to be controlled.
@@ -228,11 +234,6 @@ private:
      *       Ethernet/Wifi                   SPI
      */
     std::shared_ptr<odri_control_interface::Robot> robot_;
-
-    /**
-     * @brief Reader for serial port to read arduino slider values.
-     */
-    std::shared_ptr<blmc_drivers::SerialReader> serial_reader_;
 
     /**
      * @brief ATI sensor.

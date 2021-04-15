@@ -34,42 +34,7 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
             rt_printf("\33[H\33[2J");  // clear screen
             rt_printf("Sensory data:");
             rt_printf("\n");
-            print_vector("des joint_torque               ",
-                         desired_torque);
-            print_vector("act joint_position             ",
-                         robot.get_joint_positions());
-            print_vector("act joint_velocity             ",
-                         robot.get_joint_velocities());
-            print_vector("act joint torque               ",
-                         robot.get_joint_target_torques());
-            print_vector("act joint target torque        ",
-                         robot.get_joint_torques());
-            print_vector("act height sensor              ",
-                         robot.get_height_sensors());
-            print_vector("act ati force                  ",
-                         robot.get_ati_force());
-            print_vector("act ati torque                 ",
-                         robot.get_ati_torque());
-            print_vector_bool("act status motor ready         ",
-                         robot.get_motor_ready());
-            print_vector_bool("act status motor enabled       ",
-                         robot.get_motor_enabled());
-            print_vector_bool("act status motor board enabled ",
-                         robot.get_motor_board_enabled());
-            print_vector_int("act status motor board errors  ",
-                         robot.get_motor_board_errors());
-            print_vector("act slider pos                 ",
-                         robot.get_slider_positions());
-            print_vector("act imu quat                   ",
-                         robot.get_base_attitude_quaternion());
-            print_vector("act imu rpy                    ",
-                         robot.get_base_attitude());
-            print_vector("act imu acc                    ",
-                         robot.get_base_accelerometer());
-            print_vector("act imu gyroscope              ",
-                         robot.get_base_gyroscope());
-            print_vector("act imu lin acc                ",
-                         robot.get_base_linear_acceleration());
+            robot.print_all();
             rt_printf("\n");
             fflush(stdout);
         }

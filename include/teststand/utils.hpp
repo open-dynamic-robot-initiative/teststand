@@ -23,6 +23,8 @@
 #include "real_time_tools/timer.hpp"
 #include "yaml_utils/yaml_cpp_fwd.hpp"
 
+#pragma once
+
 namespace teststand
 {
 /**
