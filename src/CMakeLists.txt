@@ -24,7 +24,6 @@ target_include_directories(
   teststand PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                    $<INSTALL_INTERFACE:include>)
 # Link the dependencies.
-target_link_libraries(teststand blmc_drivers::blmc_drivers)
 target_link_libraries(teststand ati_ft_sensor::ati_ft_sensor)
 target_link_libraries(teststand odri_control_interface::odri_control_interface)
 target_link_libraries(teststand real_time_tools::real_time_tools)
@@ -51,37 +50,40 @@ target_link_libraries(teststand_hardware_calibration teststand)
 # Export the target.
 list(APPEND all_exe_targets teststand_hardware_calibration)
 
+
 #
 # Declare the teststand_ti library.
 #
-add_library(teststand_ti SHARED teststand_ti.cpp)
-# Add includes
-target_include_directories(
-  teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                      $<INSTALL_INTERFACE:include>)
-# Link the dependencies.
-target_link_libraries(teststand_ti ati_ft_sensor::ati_ft_sensor)
-target_link_libraries(teststand_ti blmc_drivers::blmc_drivers)
-target_link_libraries(teststand_ti real_time_tools::real_time_tools)
-target_link_libraries(teststand_ti yaml_utils::yaml_utils)
-target_link_libraries(teststand_ti Eigen3::Eigen)
-# Export the target.
-list(APPEND all_lib_targets teststand_ti)
+if (BUILD_TESTSTAND_TI)
+  add_library(teststand_ti SHARED teststand_ti.cpp)
+  # Add includes
+  target_include_directories(
+    teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                        $<INSTALL_INTERFACE:include>)
+  # Link the dependencies.
+  target_link_libraries(teststand_ti ati_ft_sensor::ati_ft_sensor)
+  target_link_libraries(teststand_ti blmc_driver::blmc_driver)
+  target_link_libraries(teststand_ti real_time_tools::real_time_tools)
+  target_link_libraries(teststand_ti yaml_utils::yaml_utils)
+  target_link_libraries(teststand_ti Eigen3::Eigen)
+  # Export the target.
+  list(APPEND all_lib_targets teststand_ti)
 
-#
-# Teststand hardware calibration program.
-#
-add_executable(teststand_ti_hardware_calibration
-               programs/hardware_calibration_teststand_ti.cpp)
-# Add the include dependencies.
-target_include_directories(
-  teststand_ti_hardware_calibration
-  PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-         $<INSTALL_INTERFACE:include>)
-# Link the dependencies.
-target_link_libraries(teststand_ti_hardware_calibration teststand_ti)
-# Export the target.
-list(APPEND all_exe_targets teststand_ti_hardware_calibration)
+  #
+  # Teststand hardware calibration program.
+  #
+  add_executable(teststand_ti_hardware_calibration
+                programs/hardware_calibration_teststand_ti.cpp)
+  # Add the include dependencies.
+  target_include_directories(
+    teststand_ti_hardware_calibration
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+          $<INSTALL_INTERFACE:include>)
+  # Link the dependencies.
+  target_link_libraries(teststand_ti_hardware_calibration teststand_ti)
+  # Export the target.
+  list(APPEND all_exe_targets teststand_ti_hardware_calibration)
+endif()
 
 #
 # Optionally compile the dynamic_graph_manager Teststand wrapper.
@@ -121,39 +123,41 @@ if(${dynamic_graph_manager_FOUND})
   # Export.
   list(APPEND all_exe_targets dg_main_teststand)
 
-  #
-  # create dgm_teststand library
-  #
-  add_library(dgm_teststand_ti SHARED dgm_teststand_ti.cpp)
-  # Add the include dependencies.
-  target_include_directories(
-    dgm_teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                            $<INSTALL_INTERFACE:include>)
-  # Link the dependencies.
-  target_link_libraries(dgm_teststand_ti teststand_ti)
-  target_link_libraries(dgm_teststand_ti
-                        dynamic_graph_manager::dynamic_graph_manager)
-  # Export the target.
-  list(APPEND all_lib_targets dgm_teststand_ti)
+  if (BUILD_TESTSTAND_TI)
+    #
+    # create dgm_teststand library
+    #
+    add_library(dgm_teststand_ti SHARED dgm_teststand_ti.cpp)
+    # Add the include dependencies.
+    target_include_directories(
+      dgm_teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+                              $<INSTALL_INTERFACE:include>)
+    # Link the dependencies.
+    target_link_libraries(dgm_teststand_ti teststand_ti)
+    target_link_libraries(dgm_teststand_ti
+                          dynamic_graph_manager::dynamic_graph_manager)
+    # Export the target.
+    list(APPEND all_lib_targets dgm_teststand_ti)
 
-  #
-  # Create the teststand executable.
-  #
-  add_executable(dg_main_teststand_ti programs/dg_main_teststand_ti.cpp)
-  # Add the include dependencies.
-  target_include_directories(
-    dg_main_teststand_ti
-    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-           ${dynamic_graph_manager_INCLUDE_DIR} $<INSTALL_INTERFACE:include>)
-  # Link the dependencies.
-  target_link_libraries(dg_main_teststand_ti dgm_teststand_ti)
-  target_compile_definitions(
-    dg_main_teststand_ti
-    PUBLIC
-      DYNAMIC_GRAPH_MANAGER_YAML_PATH="${dynamic_graph_manager_yaml_file}"
-      ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
-  # Export.
-  list(APPEND all_exe_targets dg_main_teststand_ti)
+    #
+    # Create the teststand executable.
+    #
+    add_executable(dg_main_teststand_ti programs/dg_main_teststand_ti.cpp)
+    # Add the include dependencies.
+    target_include_directories(
+      dg_main_teststand_ti
+      PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+            ${dynamic_graph_manager_INCLUDE_DIR} $<INSTALL_INTERFACE:include>)
+    # Link the dependencies.
+    target_link_libraries(dg_main_teststand_ti dgm_teststand_ti)
+    target_compile_definitions(
+      dg_main_teststand_ti
+      PUBLIC
+        DYNAMIC_GRAPH_MANAGER_YAML_PATH="${dynamic_graph_manager_yaml_file}"
+        ODRI_CONTROL_INTERFACE_YAML_PATH="${odri_control_interface_yaml_path}")
+    # Export.
+    list(APPEND all_exe_targets dg_main_teststand_ti)
+  endif()
 endif(${dynamic_graph_manager_FOUND})
 
 #
