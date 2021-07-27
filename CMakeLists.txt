@@ -21,18 +21,25 @@ find_package(pybind11 REQUIRED)
 # local dependencies.
 find_package(ament_cmake REQUIRED)
 find_package(ati_ft_sensor REQUIRED)
-find_package(blmc_drivers REQUIRED)
 find_package(odri_control_interface REQUIRED)
 find_package(real_time_tools REQUIRED)
 find_package(yaml_utils REQUIRED)
 find_package(PythonModules REQUIRED COMPONENTS robot_properties_teststand)
 
 # optional dependencies.
+find_package(blmc_driver QUIET)
 find_package(dynamic_graph_manager QUIET)
 
-# Export de dependencies.
-ament_export_dependencies(blmc_drivers odri_control_interface real_time_tools
-                          yaml_utils dynamic_graph_manager)
+# Build and export depending on weather blmc_drivers was found or not.
+set(BUILD_TESTSTAND_TI off)
+set(export_list
+  odri_control_interface real_time_tools yaml_utils dynamic_graph_manager
+)
+if(${blmc_drivers_FOUND})
+  set(BUILD_TESTSTAND_TI on)
+  set(export_list ${export_list} blmc_driver)
+endif()
+ament_export_dependencies(${export_list})
 
 # prepare the final export
 ament_export_interfaces(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)

@@ -19,11 +19,11 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl_bind.h>
 
-#include "teststand/teststand.hpp"
-#include "teststand/teststand_ti.hpp"
+// #include "teststand/teststand.hpp"
+// #include "teststand/teststand_ti.hpp"
 
 namespace py = pybind11;
-using namespace teststand;
+// using namespace teststand;
 
 PYBIND11_MODULE(teststand, m)
 {
