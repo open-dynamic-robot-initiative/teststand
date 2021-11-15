@@ -28,8 +28,6 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
     Eigen::Vector2d init_pose;
     Eigen::Matrix<bool, 2, 1> motor_enabled;
 
-    rt_printf("Wait until ready... \n");
-    robot.wait_until_ready();
     rt_printf("Calibrating... \n");
     robot.calibrate();
 

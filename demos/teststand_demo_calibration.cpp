@@ -13,6 +13,7 @@
 #include "teststand/utils.hpp"
 
 using namespace teststand;
+bool print_home_offset = false;
 
 static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
 {
@@ -20,17 +21,20 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* robot_void_ptr)
 
     Eigen::Vector2d zero_torques = Eigen::Vector2d::Zero();
 
-    robot.wait_until_ready();
-    rt_printf("Running calibration...\n");
-    robot.calibrate();
-    rt_printf("Running calibration... Done.\n");
+    long int counter = 0;
 
-    rt_printf("Go idle indefinitely, ctrl+c to quit.\n");
     real_time_tools::Spinner spinner;
     spinner.set_period(0.001);
+    
     while (!CTRL_C_DETECTED)
     {
         robot.acquire_sensors();
+
+        if (counter++ % 200 == 0 && print_home_offset)
+        {
+            print_vector("Home offset angle [Rad]", -robot.get_joint_positions());
+        }
+
         robot.send_target_joint_torque(zero_torques);
         spinner.spin();
     }
@@ -55,13 +59,18 @@ int main(int argc, char** argv)
     Teststand robot;
     robot.initialize(argv[1]);
 
+    thread.create_realtime_thread(&control_loop, &robot);
+
     rt_printf("Controller is set up.\n");
     
     rt_printf("Press enter to launch the calibration.\n");
     char str[256];
     std::cin.get(str, 256);  // get c-string
 
-    thread.create_realtime_thread(&control_loop, &robot);
+    Eigen::Vector2d zero_pos = Eigen::Vector2d::Zero();
+    robot.request_calibration(zero_pos);
+
+    print_home_offset = true;
 
     // Wait until the application is killed.
     thread.join();

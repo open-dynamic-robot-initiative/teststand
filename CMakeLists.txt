@@ -20,10 +20,12 @@ find_package(pybind11 REQUIRED)
 
 # local dependencies.
 find_package(ament_cmake REQUIRED)
-find_package(ati_ft_sensor REQUIRED)
+find_package(slider_box REQUIRED)
 find_package(odri_control_interface REQUIRED)
 find_package(real_time_tools REQUIRED)
 find_package(yaml_utils REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(PythonModules REQUIRED COMPONENTS robot_properties_teststand)
 
 # optional dependencies.
@@ -34,6 +36,7 @@ find_package(dynamic_graph_manager QUIET)
 set(BUILD_TESTSTAND_TI off)
 set(export_list
   odri_control_interface real_time_tools yaml_utils dynamic_graph_manager
+  rclcpp rclcpp_components
 )
 if(${blmc_drivers_FOUND})
   set(BUILD_TESTSTAND_TI on)

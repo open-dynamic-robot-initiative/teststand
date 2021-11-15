@@ -29,7 +29,7 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
         robot.acquire_sensors();
 
         // print -----------------------------------------------------------
-        if ((count % 1000) == 0)
+        if ((count % 200) == 0)
         {
             rt_printf("\33[H\33[2J");  // clear screen
             rt_printf("Sensory data:");

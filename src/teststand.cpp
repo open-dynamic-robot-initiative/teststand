@@ -30,6 +30,8 @@ Teststand::Teststand()
     control_state_ = ControlState::initial;
     calibrate_request_ = false;
     nb_time_we_acquired_sensors_ = 0;
+
+    active_estop_ = false;
 }
 
 void Teststand::set_max_current(double max_current)
@@ -39,12 +41,9 @@ void Teststand::set_max_current(double max_current)
 
 void Teststand::initialize(const std::string& network_id)
 {
-    // ATI sensor initialization.
-    ati_sensor_.initialize();
-    // Wait to make sure there is a first package when acquire_sensors() later.
-    real_time_tools::Timer::sleep_sec(0.5);
-    // Calibrate the zeros of the ati sensor given the current measurement.
-    ati_sensor_.setBias();
+    // Use a serial port to read slider values.
+    serial_reader_ =
+        std::make_shared<slider_box::SerialReader>("/dev/not_used", 5);
 
     // Main driver interface.
     robot_ = odri_control_interface::RobotFromYamlFile(
@@ -64,6 +63,8 @@ void Teststand::wait_until_ready()
 
 bool Teststand::acquire_sensors()
 {
+    static int estop_counter_ = 0;
+
     // Acquire the data.
     robot_->ParseSensorData();
 
@@ -93,6 +94,22 @@ bool Teststand::acquire_sensors()
                 1.0275690598232334 *
                 robot_->robot_if->motor_drivers[0].adc[0];
 
+    // acquire the slider positions
+    serial_reader_->fill_vector(slider_positions_vector_);
+    for (unsigned i = 0; i < slider_positions_.size(); ++i)
+    {
+        // acquire the slider
+        slider_positions_(i) = double(slider_positions_vector_[i + 1]) / 1024.;
+    }
+
+    // Active the estop if button is pressed or the estop was active before.
+    active_estop_ |= slider_positions_vector_[0] == 0;
+
+    if (active_estop_ && estop_counter_++ % 2000 == 0)
+    {
+        robot_->ReportError("Soft E-Stop is active.");
+    }
+
     /**
      * The different status.
      */
@@ -106,15 +123,6 @@ bool Teststand::acquire_sensors()
     motor_enabled_[1] = robot_->joints->GetEnabled()[1];
     motor_ready_[0] = robot_->joints->GetReady()[0];
     motor_ready_[1] = robot_->joints->GetReady()[1];
-
-    // Ati sensor readings.
-    ati_sensor_.getFT(&ati_force_(0), &ati_torque_(0));
-    // Rotate the force and torque values, such that pressing on the force
-    // sensor creates a positive force.
-    ati_force_(0) *= -1;
-    ati_force_(2) *= -1;
-    ati_torque_(0) *= -1;
-    ati_torque_(2) *= -1;
 
     ++nb_time_we_acquired_sensors_;
 
@@ -183,12 +191,17 @@ void Teststand::request_calibration()
 void Teststand::calibrate(const Eigen::Vector2d& home_offset_rad)
 {
     calib_ctrl_->UpdatePositionOffsets(home_offset_rad);
-    robot_->RunCalibration(calib_ctrl_);
+
+    Eigen::Vector2d target;
+    target.setZero();
+    robot_->RunCalibration(calib_ctrl_, target);
 }
 
 void Teststand::calibrate()
 {
-    robot_->RunCalibration(calib_ctrl_);
+    Eigen::Vector2d target;
+    target.setZero();
+    robot_->RunCalibration(calib_ctrl_, target);
 }
 
 }  // namespace teststand

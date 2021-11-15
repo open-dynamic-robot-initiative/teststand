@@ -65,9 +65,8 @@ void DGMTeststand::get_sensors_to_map(dynamic_graph_manager::VectorDGMap& map)
      * Additional data
      */
     map.at("height_sensors") = teststand_.get_height_sensor();
-    map.at("ati_force") = teststand_.get_ati_force();
-    map.at("ati_torque") = teststand_.get_ati_torque();
-
+    map.at("slider_positions") = teststand_.get_slider_positions();
+    
     /**
      * Robot status
      */

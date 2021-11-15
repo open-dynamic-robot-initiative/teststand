@@ -27,14 +27,6 @@ public:
      * @brief This represents the contact sensor
      */
     typedef Eigen::Matrix<double, 1, 1> VectorContact;
-    /**
-     * @brief This type define the forces from the ati-FT sensors
-     */
-    typedef Eigen::Matrix<double, 3, 1> VectorAtiForce;
-    /**
-     * @brief This type define the torques from the ati-FT sensors
-     */
-    typedef Eigen::Matrix<double, 3, 1> VectorAtiTorque;
 
     /**
      * @brief TeststandAbstractInterface is the constructor of the class.
@@ -56,8 +48,6 @@ public:
         motor_ready_.fill(false);
         motor_board_enabled_.fill(false);
         motor_board_errors_.fill(0);
-        ati_force_.fill(0.0);
-        ati_torque_.fill(0.0);
     }
 
     /**
@@ -120,8 +110,6 @@ public:
         print_vector_bool("motor_ready:            ", motor_ready_);
         print_vector_bool("motor_board_enabled:    ", motor_board_enabled_);
         print_vector_int("motor_board_errors:     ", motor_board_errors_);
-        print_vector("ati_force:              ", ati_force_);
-        print_vector("ati_torque:             ", ati_torque_);
     }
 
     /**
@@ -282,29 +270,6 @@ public:
         return motor_board_errors_;
     }
 
-    /**
-     * @brief Get the ati_force_ object
-     * WARNING !!!! The method acquire_sensors() has to be called prior to
-     * any getter to have up to date data.
-     *
-     * @return const Eigen::Ref<VectorAtiForce>
-     */
-    const Eigen::Ref<VectorAtiForce> get_ati_force()
-    {
-        return ati_force_;
-    }
-
-    /**
-     * @brief Get the ati_torque_ object
-     * WARNING !!!! The method acquire_sensors() has to be called prior to
-     * any getter to have up to date data.
-     *
-     * @return const Eigen::Ref<VectorAtiTorque>
-     */
-    const Eigen::Ref<VectorAtiTorque> get_ati_torque()
-    {
-        return ati_torque_;
-    }
 
 protected:
     /**
@@ -398,15 +363,6 @@ protected:
      */
     Eigen::Matrix<int, 1, 1> motor_board_errors_;
 
-    /**
-     * @brief 3D linear force from the ATI FT sensor
-     */
-    VectorAtiForce ati_force_;
-
-    /**
-     * @brief 3D torque measured from the ATI FT sensor
-     */
-    VectorAtiTorque ati_torque_;
 };
 
 }  // namespace teststand

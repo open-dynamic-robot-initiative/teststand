@@ -8,7 +8,6 @@
 #ifndef TESTSTANDTi_H
 #define TESTSTANDTi_H
 
-#include "AtiFTSensor.h"
 #include "blmc_drivers/blmc_joint_module.hpp"
 #include "blmc_drivers/devices/analog_sensor.hpp"
 #include "teststand/teststand_abstract_interface.hpp"
@@ -76,10 +75,6 @@ public:
     virtual void calibrate(const Eigen::Vector2d& home_offset_rad);
 
 private:
-    /**
-     * @brief ATI sensor.
-     */
-    ati_ft_sensor::AtiFTSensor ati_sensor_;
 
     /**
      * @brief can_buses_ are the 2 can buses on the robot.

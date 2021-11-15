@@ -81,8 +81,6 @@ void DGMTeststandTi::get_sensors_to_map(dynamic_graph_manager::VectorDGMap& map)
          * Additional data
          */
         map.at("height_sensors") = teststand_.get_height_sensor();
-        map.at("ati_force") = teststand_.get_ati_force();
-        map.at("ati_torque") = teststand_.get_ati_torque();
     }
     catch (...)
     {
@@ -105,8 +103,6 @@ void DGMTeststandTi::get_sensors_to_map(dynamic_graph_manager::VectorDGMap& map)
         map.at("slider_positions").fill(0.0);
         map.at("height_sensors").fill(0.0);
 
-        map.at("ati_force").fill(0.0);
-        map.at("ati_torque").fill(0.0);
     }
 }
 

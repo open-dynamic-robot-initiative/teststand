@@ -24,7 +24,7 @@ target_include_directories(
   teststand PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                    $<INSTALL_INTERFACE:include>)
 # Link the dependencies.
-target_link_libraries(teststand ati_ft_sensor::ati_ft_sensor)
+target_link_libraries(teststand slider_box::slider_box)
 target_link_libraries(teststand odri_control_interface::odri_control_interface)
 target_link_libraries(teststand real_time_tools::real_time_tools)
 target_link_libraries(teststand yaml_utils::yaml_utils)
@@ -61,7 +61,6 @@ if (BUILD_TESTSTAND_TI)
     teststand_ti PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                         $<INSTALL_INTERFACE:include>)
   # Link the dependencies.
-  target_link_libraries(teststand_ti ati_ft_sensor::ati_ft_sensor)
   target_link_libraries(teststand_ti blmc_driver::blmc_driver)
   target_link_libraries(teststand_ti real_time_tools::real_time_tools)
   target_link_libraries(teststand_ti yaml_utils::yaml_utils)

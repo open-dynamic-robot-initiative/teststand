@@ -57,13 +57,6 @@ void TeststandTi::initialize()
     kd.fill(0.05);
     joints_.set_position_control_gains(kp, kd);
 
-    // ATI sensor initialization.
-    ati_sensor_.initialize();
-    // Wait to make sure there is a first package when acquire_sensors() later.
-    real_time_tools::Timer::sleep_sec(0.5);
-
-    // Calibrate the zeros of the ati sensor given the current measurement.
-    ati_sensor_.setBias();
 
     // wait until all board are ready and connected
     can_motor_boards_[0]->wait_until_ready();
@@ -105,18 +98,6 @@ bool TeststandTi::acquire_sensors()
             1.0701053378814493 - 0.017 -
             1.0275690598232334 *
                 height_sensors_[0]->get_measurement()->newest_element();
-
-        /**
-         * Ati sensor readings.
-         */
-        ati_sensor_.getFT(&ati_force_(0), &ati_torque_(0));
-
-        // Rotate the force and torque values, such that pressing on the force
-        // sensor creates a positive force.
-        ati_force_(0) *= -1;
-        ati_force_(2) *= -1;
-        ati_torque_(0) *= -1;
-        ati_torque_(2) *= -1;
     }
     catch (std::exception ex)
     {

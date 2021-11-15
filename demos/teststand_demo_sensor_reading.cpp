@@ -18,9 +18,8 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
 
     // 0 torques
     Eigen::Vector2d desired_torque = Eigen::Vector2d::Zero();
-    rt_printf("Sensor reading loop started \n");
 
-    robot.wait_until_ready();
+    rt_printf("Sensor reading loop finished waiting \n");
 
     size_t count = 0;
     while (!CTRL_C_DETECTED)
@@ -35,6 +34,7 @@ static THREAD_FUNCTION_RETURN_TYPE control_loop(void* args)
             rt_printf("Sensory data:");
             rt_printf("\n");
             robot.print_all();
+            print_vector("slider_positions:       ", robot.get_slider_positions());
             rt_printf("\n");
             fflush(stdout);
         }

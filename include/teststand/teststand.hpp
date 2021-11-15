@@ -13,7 +13,7 @@
 
 #include <Eigen/Eigen>
 
-#include "AtiFTSensor.h"
+#include <slider_box/serial_reader.hpp>
 #include "odri_control_interface/calibration.hpp"
 #include "odri_control_interface/robot.hpp"
 #include "teststand/teststand_abstract_interface.hpp"
@@ -178,6 +178,18 @@ public:
                calibrate_request_;
     }
 
+    /**
+     * @brief get_slider_positions
+     * @return the current sliders positions.
+     * WARNING !!!!
+     * The method <acquire_sensors>"()" has to be called
+     * prior to any getter to have up to date data.
+     */
+    const Eigen::Ref<Eigen::Vector4d> get_slider_positions()
+    {
+        return slider_positions_;
+    }
+
 protected:
     /**
      * @brief Fill attitude quaternion.
@@ -199,6 +211,27 @@ private:
 
     /** @brief base attitude quaternion. */
     Eigen::Vector4d base_attitude_quaternion_;
+
+    /**
+     * @brief Reader for serial port to read arduino slider values.
+     */
+    std::shared_ptr<slider_box::SerialReader> serial_reader_;
+
+    
+
+    /** @brief If the physical estop is pressed or not. */
+    bool active_estop_;
+
+    /**
+     * @brief slider_positions_ is the position of the linear potentiometer.
+     * Can be used as a joystick input.
+     */
+    Eigen::Vector4d slider_positions_;
+
+    /**
+     * @brief For reading the raw slider values from the serial port.
+     */
+    std::vector<int> slider_positions_vector_;
 
     /*
      * Controllers
@@ -233,11 +266,6 @@ private:
      *       Ethernet/Wifi                   SPI
      */
     std::shared_ptr<odri_control_interface::Robot> robot_;
-
-    /**
-     * @brief ATI sensor.
-     */
-    ati_ft_sensor::AtiFTSensor ati_sensor_;
 };
 
 }  // namespace teststand
